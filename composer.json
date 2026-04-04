@@ -1,0 +1,62 @@
+{
+    "name": "chuckbe/clearfacts-laravel-sdk",
+    "description": "Laravel SDK for the Clearfacts pre-accounting platform API (GraphQL)",
+    "keywords": [
+        "laravel",
+        "clearfacts",
+        "sdk",
+        "graphql",
+        "accounting",
+        "pre-accounting",
+        "belgium"
+    ],
+    "homepage": "https://github.com/chuckbe/clearfacts-laravel-sdk",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Karel Brijs",
+            "email": "karel@chuck.be"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^10.0|^11.0|^12.0",
+        "saloonphp/saloon": "^3.0",
+        "saloonphp/laravel-plugin": "^3.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "larastan/larastan": "^2.0|^3.0",
+        "orchestra/testbench": "^8.0|^9.0|^10.0",
+        "phpro/grumphp-shim": "^2.0",
+        "phpunit/phpunit": "^10.0|^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Clearfacts\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Clearfacts\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Clearfacts\\ClearfactsServiceProvider"
+            ],
+            "aliases": {
+                "Clearfacts": "Clearfacts\\Facades\\Clearfacts"
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpro/grumphp-shim": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
