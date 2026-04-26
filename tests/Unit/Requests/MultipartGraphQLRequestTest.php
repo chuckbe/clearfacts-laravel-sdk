@@ -2,6 +2,7 @@
 
 namespace Clearfacts\Tests\Unit\Requests;
 
+use Clearfacts\Api\ClearfactsApiClient;
 use Clearfacts\Api\Requests\Document\UploadFileRequest;
 use Clearfacts\Enums\InvoiceType;
 use Clearfacts\Tests\TestCase;
@@ -25,13 +26,18 @@ class MultipartGraphQLRequestTest extends TestCase
         // First part: GraphQL query
         $this->assertInstanceOf(MultipartValue::class, $body[0]);
         $this->assertSame('query', $body[0]->name);
-        $this->assertStringContainsString('mutation upload', $body[0]->value);
-        $this->assertStringContainsString('uploadFile', $body[0]->value);
+        $queryValue = $body[0]->value;
+        $this->assertIsString($queryValue);
+        $this->assertStringContainsString('mutation upload', $queryValue);
+        $this->assertStringContainsString('uploadFile', $queryValue);
 
         // Second part: variables
         $this->assertInstanceOf(MultipartValue::class, $body[1]);
         $this->assertSame('variables', $body[1]->name);
-        $decoded = json_decode($body[1]->value, true);
+        $variablesValue = $body[1]->value;
+        $this->assertIsString($variablesValue);
+        $decoded = json_decode($variablesValue, true);
+        $this->assertIsArray($decoded);
         $this->assertSame('BE0123456789', $decoded['vatNumber']);
         $this->assertSame('invoice.pdf', $decoded['fileName']);
         $this->assertSame('PURCHASE', $decoded['invoiceType']);
@@ -53,5 +59,23 @@ class MultipartGraphQLRequestTest extends TestCase
         );
 
         $this->assertSame('/graphql', $request->resolveEndpoint());
+    }
+
+    public function test_upload_file_request_sends_multipart_content_type_with_boundary(): void
+    {
+        // Regression: connector defaults must not overwrite the multipart Content-Type
+        // that HasMultipartBody installs (otherwise Clearfacts replies "Invalid JSON").
+        $client = new ClearfactsApiClient('test-token');
+        $request = new UploadFileRequest(
+            vatNumber: 'BE0123456789',
+            uploadFileName: 'invoice.pdf',
+            invoiceType: InvoiceType::PURCHASE,
+            uploadFileContent: 'fake-pdf-bytes',
+        );
+
+        $contentType = $client->createPendingRequest($request)->headers()->get('Content-Type');
+
+        $this->assertIsString($contentType);
+        $this->assertStringStartsWith('multipart/form-data; boundary=', $contentType);
     }
 }
