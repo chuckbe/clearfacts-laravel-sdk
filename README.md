@@ -5,7 +5,8 @@ A Laravel SDK for the [Clearfacts](https://www.clearfacts.be/) pre-accounting pl
 ## Requirements
 
 - PHP 8.2+
-- Laravel 10, 11, or 12
+- Laravel 11, 12 or 13
+- Saloon 4 (`saloonphp/saloon` ^4.0)
 
 ## Installation
 
